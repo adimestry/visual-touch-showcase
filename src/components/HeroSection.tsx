@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -72,13 +72,34 @@ const HeroSection = () => {
             <div className="relative w-full aspect-square max-w-lg mx-auto">
               <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-secondary/20 rounded-full"></div>
               <div className="absolute inset-4 bg-gradient-to-br from-accent to-secondary rounded-full opacity-10"></div>
-              <div className="absolute inset-[10%] bg-muted rounded-full overflow-hidden">
+              <motion.div 
+                className="absolute inset-[10%] bg-muted rounded-full overflow-hidden flex items-center justify-center"
+                animate={{ 
+                  boxShadow: [
+                    "0 0 20px 5px rgba(255,255,255,0.1)", 
+                    "0 0 30px 8px rgba(255,255,255,0.2)", 
+                    "0 0 20px 5px rgba(255,255,255,0.1)"
+                  ]
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity,
+                  ease: "easeInOut" 
+                }}
+              >
                 <img
                   src="/placeholder.svg"
                   alt="Designer portrait"
                   className="w-full h-full object-cover"
                 />
-              </div>
+                <motion.div 
+                  className="absolute top-0 right-0 m-6"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                >
+                  <Star className="text-accent w-8 h-8 opacity-70" />
+                </motion.div>
+              </motion.div>
             </div>
           </motion.div>
         </div>

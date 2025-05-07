@@ -6,6 +6,7 @@ import WorkSection from "@/components/WorkSection";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import SpaceAnimation from "@/components/SpaceAnimation";
 
 const Index = () => {
   // Handle dark mode based on user preference
@@ -23,6 +24,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full">
+      <SpaceAnimation />
       <Navbar />
       <HeroSection />
       <WorkSection />
