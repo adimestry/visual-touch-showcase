@@ -9,3 +9,8 @@ export interface Project {
   fullDescription?: string;
   gallery?: string[];
 }
+
+export interface User {
+  username: string;
+  isAdmin: boolean;
+}

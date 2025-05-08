@@ -2,8 +2,16 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import LoginDialog from "./LoginDialog";
+import { User } from "@/types/project";
 
-const Navbar = () => {
+interface NavbarProps {
+  user: User | null;
+  onLogin: (user: User) => void;
+  onLogout: () => void;
+}
+
+const Navbar = ({ user, onLogin, onLogout }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -58,6 +66,24 @@ const Navbar = () => {
           >
             Contact
           </motion.a>
+          
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">
+                Welcome, {user.username} {user.isAdmin && "(Admin)"}
+              </span>
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={onLogout}
+              >
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <LoginDialog onLogin={onLogin} />
+          )}
+          
           <Button 
             asChild
             className="bg-accent hover:bg-accent/90 text-white"
@@ -73,7 +99,20 @@ const Navbar = () => {
         </nav>
 
         {/* Mobile menu button */}
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center gap-2">
+          {user ? (
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={onLogout}
+              className="text-xs px-2 py-1 h-7"
+            >
+              Logout
+            </Button>
+          ) : (
+            <LoginDialog onLogin={onLogin} />
+          )}
+          
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="p-2 focus:outline-none"

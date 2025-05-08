@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -10,9 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
-import { Project } from "@/types/project";
+import { Project, User } from "@/types/project";
 
-// Initial projects data
+// Demo projects data with more examples
 const initialProjects: Project[] = [
   {
     id: 1,
@@ -44,7 +45,56 @@ const initialProjects: Project[] = [
     fullDescription: "This banner was designed for the main entrance of a major tech conference. The design focuses on visibility from a distance while maintaining brand consistency and communicating key information about the event.",
     gallery: ["/placeholder.svg", "/placeholder.svg"]
   },
-  // ... keep existing code (other project data)
+  {
+    id: 4,
+    title: "Furniture E-commerce Website",
+    description: "Modern e-commerce website for a premium furniture brand featuring product showcase and shopping cart functionality.",
+    image: "/placeholder.svg",
+    tags: ["Web Design", "E-commerce", "UI/UX"],
+    category: "web",
+    fullDescription: "This e-commerce platform was designed with a focus on showcasing high-quality furniture photography and providing an intuitive shopping experience. The design emphasizes clean lines and ample white space to let the products shine.",
+    gallery: ["/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    id: 5,
+    title: "Fitness Tracking Mobile App",
+    description: "User-friendly mobile app for tracking workouts, monitoring progress, and setting fitness goals.",
+    image: "/placeholder.svg",
+    tags: ["App Design", "UI/UX", "Mobile"],
+    category: "app",
+    fullDescription: "This fitness tracking app features an intuitive interface that makes it easy for users to log workouts, track progress over time, and set achievable fitness goals. The design includes customizable dashboards and motivational elements.",
+    gallery: ["/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    id: 6,
+    title: "Coffee Brand Identity",
+    description: "Complete brand identity for an artisan coffee roaster including logo, packaging, and marketing materials.",
+    image: "/placeholder.svg",
+    tags: ["Logo Design", "Branding", "Packaging"],
+    category: "logo",
+    fullDescription: "This comprehensive brand identity project for an artisan coffee roaster included logo design, packaging for different coffee varieties, in-store signage, and marketing materials. The design captures the artisanal nature of the brand.",
+    gallery: ["/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    id: 7,
+    title: "Fashion Lookbook Design",
+    description: "Seasonal lookbook design for fashion brand showcasing new collection through editorial photography and typography.",
+    image: "/placeholder.svg",
+    tags: ["Print Design", "Editorial", "Fashion"],
+    category: "printing",
+    fullDescription: "This seasonal lookbook design for a fashion brand combines editorial photography with dynamic layouts and typography. The design embraces white space and strategic pacing to create an engaging presentation of the collection.",
+    gallery: ["/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    id: 8,
+    title: "Music Streaming App",
+    description: "Mobile app design for a music streaming service with personalized recommendations and playlist creation.",
+    image: "/placeholder.svg",
+    tags: ["App Design", "UI/UX", "Entertainment"],
+    category: "app",
+    fullDescription: "This music streaming app features a dark-themed interface optimized for browsing and discovering music. The design includes intuitive playlist creation, personalized recommendations, and a seamless listening experience.",
+    gallery: ["/placeholder.svg", "/placeholder.svg"]
+  }
 ];
 
 const Index = () => {
@@ -54,7 +104,12 @@ const Index = () => {
     const savedProjects = localStorage.getItem('portfolioProjects');
     return savedProjects ? JSON.parse(savedProjects) : initialProjects;
   });
-  const [isAdmin, setIsAdmin] = useState(false);
+  
+  // State for user authentication
+  const [user, setUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem('portfolioUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   
   // Handle dark mode based on user preference
   useEffect(() => {
@@ -69,22 +124,21 @@ const Index = () => {
     } else {
       document.documentElement.classList.remove("dark");
     }
-
-    // For demo purposes - admin mode toggle shortcut (Ctrl+Shift+A)
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-        setIsAdmin(prev => !prev);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Save projects to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('portfolioProjects', JSON.stringify(projects));
   }, [projects]);
+
+  // Save user to localStorage whenever it changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('portfolioUser', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('portfolioUser');
+    }
+  }, [user]);
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -118,12 +172,21 @@ const Index = () => {
     setProjects(prev => prev.filter(p => p.id !== id));
   };
 
+  // Handle login and logout
+  const handleLogin = (newUser: User) => {
+    setUser(newUser);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   return (
     <div className="min-h-screen w-full">
       <SpaceAnimation />
       
       {/* Admin Mode Indicator */}
-      {isAdmin && (
+      {user?.isAdmin && (
         <div className="fixed top-6 right-20 z-50 bg-accent/90 text-white px-3 py-1 rounded-md text-sm font-medium animate-pulse">
           Admin Mode
         </div>
@@ -151,13 +214,17 @@ const Index = () => {
         </Button>
       </motion.div>
       
-      <Navbar />
+      <Navbar 
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+      />
       <HeroSection />
       <WorkSection 
         projects={projects} 
         onSaveProject={handleSaveProject}
         onDeleteProject={handleDeleteProject}
-        isAdmin={isAdmin}
+        isAdmin={user?.isAdmin}
       />
       <AboutSection />
       <ContactSection />
