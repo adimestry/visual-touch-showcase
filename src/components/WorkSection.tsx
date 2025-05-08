@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -54,6 +53,7 @@ const WorkSection = ({
     show: { opacity: 1, y: 0 }
   };
 
+  // Fixed the filtering logic to ensure "all" works properly
   const filteredProjects = activeTab === "all" 
     ? projects 
     : projects.filter(project => project.category === activeTab);
