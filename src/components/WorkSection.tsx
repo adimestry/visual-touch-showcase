@@ -20,82 +20,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AddEditProjectDialog from "./AddEditProjectDialog";
+import { Project } from "@/types/project";
 
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  tags: string[];
-  category: "logo" | "wedding" | "printing" | "web" | "app" | "other";
-  fullDescription?: string;
-  gallery?: string[];
+interface WorkSectionProps {
+  projects: Project[];
+  onSaveProject: (project: Project) => void;
+  onDeleteProject: (id: number) => void;
+  isAdmin?: boolean;
 }
 
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "Clean Minimalist Logo",
-    description: "A modern, minimalist logo design for a tech startup with custom typography and iconic elements.",
-    image: "/placeholder.svg",
-    tags: ["Logo Design", "Branding", "Typography"],
-    category: "logo",
-    fullDescription: "This minimalist logo design represents the client's vision for clean, forward-thinking brand identity. The design process involved several iterations to achieve perfect balance between simplicity and recognition.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 2,
-    title: "Luxury Wedding Invitation",
-    description: "Elegant wedding card design with gold foil accents and custom calligraphy for a luxury event.",
-    image: "/placeholder.svg",
-    tags: ["Wedding Card", "Print Design", "Calligraphy"],
-    category: "wedding",
-    fullDescription: "This luxury wedding invitation set features handcrafted elements including custom calligraphy, gold foil details, and premium paper selection. The design reflects the couple's sophisticated style and the elegance of their event.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 3,
-    title: "Corporate Event Banner",
-    description: "Large format banner design for annual tech conference with dynamic visuals and clear information hierarchy.",
-    image: "/placeholder.svg",
-    tags: ["Banner Design", "Event Graphics", "Large Format"],
-    category: "printing",
-    fullDescription: "This banner was designed for the main entrance of a major tech conference. The design focuses on visibility from a distance while maintaining brand consistency and communicating key information about the event.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 4,
-    title: "Vintage-Inspired Restaurant Logo",
-    description: "A handcrafted logo design for an upscale restaurant blending vintage aesthetics with modern elements.",
-    image: "/placeholder.svg",
-    tags: ["Logo Design", "Restaurant", "Vintage"],
-    category: "logo",
-    fullDescription: "This restaurant logo design draws inspiration from classic emblems while incorporating contemporary design principles. Hand-drawn elements give it an authentic feel that resonates with the restaurant's farm-to-table concept.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 5,
-    title: "Seasonal Retail Banners",
-    description: "A series of coordinated retail banners designed for a fashion brand's summer collection launch.",
-    image: "/placeholder.svg",
-    tags: ["Retail Graphics", "Banner Set", "Campaign"],
-    category: "printing",
-    fullDescription: "This coordinated set of retail banners was designed to create a cohesive shopping experience throughout the store while highlighting key seasonal products and promotions.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 6,
-    title: "Rustic Wedding Suite",
-    description: "Complete wedding stationery package featuring natural textures and botanical illustrations.",
-    image: "/placeholder.svg",
-    tags: ["Wedding", "Stationery Set", "Illustration"],
-    category: "wedding",
-    fullDescription: "This comprehensive wedding suite included save-the-dates, invitations, RSVP cards, programs, menus, and thank you cards. The unified design used botanical elements and natural textures to reflect the outdoor venue and rustic theme.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  }
-];
-
-const WorkSection = () => {
+const WorkSection = ({ 
+  projects, 
+  onSaveProject, 
+  onDeleteProject, 
+  isAdmin = false 
+}: WorkSectionProps) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeTab, setActiveTab] = useState("all");
 
@@ -134,6 +74,13 @@ const WorkSection = () => {
             Explore my creative projects spanning various design disciplines,
             from logo design to wedding stationery and large-format printing.
           </p>
+          
+          {/* Add New Project Button (Admin only) */}
+          {isAdmin && (
+            <div className="mt-6">
+              <AddEditProjectDialog onSave={onSaveProject} isAdmin={isAdmin} />
+            </div>
+          )}
         </motion.div>
 
         <Tabs 
@@ -170,7 +117,17 @@ const WorkSection = () => {
                       />
                     </div>
                     <CardHeader className="p-4">
-                      <CardTitle className="font-heading">{project.title}</CardTitle>
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="font-heading">{project.title}</CardTitle>
+                        {isAdmin && (
+                          <AddEditProjectDialog 
+                            project={project} 
+                            onSave={onSaveProject} 
+                            onDelete={onDeleteProject}
+                            isAdmin={isAdmin}
+                          />
+                        )}
+                      </div>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {project.tags.map((tag, index) => (
                           <Badge key={index} variant={
@@ -228,7 +185,7 @@ const WorkSection = () => {
                                 {selectedProject?.fullDescription || selectedProject?.description}
                               </DialogDescription>
                               
-                              {selectedProject?.gallery && (
+                              {selectedProject?.gallery && selectedProject.gallery.length > 0 && (
                                 <div className="mt-6">
                                   <h4 className="font-medium mb-2">Project Gallery</h4>
                                   <div className="grid grid-cols-2 gap-2">
