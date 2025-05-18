@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -37,6 +37,13 @@ const WorkSection = ({
 }: WorkSectionProps) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeTab, setActiveTab] = useState("all");
+  const [localProjects, setLocalProjects] = useState<Project[]>(projects);
+  
+  // Update local projects when parent projects change
+  useEffect(() => {
+    setLocalProjects(projects);
+    console.log("Projects updated in WorkSection:", projects);
+  }, [projects]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -52,11 +59,34 @@ const WorkSection = ({
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 }
   };
+  
+  // Handle local save to ensure immediate UI updates
+  const handleSaveProject = (project: Project) => {
+    onSaveProject(project);
+    // Update local state immediately for better UX
+    setLocalProjects(prev => {
+      const existingIndex = prev.findIndex(p => p.id === project.id);
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex] = project;
+        return updated;
+      } else {
+        return [...prev, project];
+      }
+    });
+  };
+  
+  // Handle local delete for immediate UI updates
+  const handleDeleteProject = (id: number) => {
+    onDeleteProject(id);
+    // Update local state immediately
+    setLocalProjects(prev => prev.filter(p => p.id !== id));
+  };
 
-  // Fixed the filtering logic to ensure "all" works properly
+  // Fixed the filtering logic to ensure "all" works properly with local projects
   const filteredProjects = activeTab === "all" 
-    ? projects 
-    : projects.filter(project => project.category === activeTab);
+    ? localProjects 
+    : localProjects.filter(project => project.category === activeTab);
 
   return (
     <section id="work" className="py-24 bg-muted/30">
@@ -77,7 +107,7 @@ const WorkSection = ({
           
           {/* Add New Project Button (available to everyone) */}
           <div className="mt-6">
-            <AddEditProjectDialog onSave={onSaveProject} />
+            <AddEditProjectDialog onSave={handleSaveProject} />
           </div>
         </motion.div>
 
@@ -123,8 +153,8 @@ const WorkSection = ({
                           {/* Edit button available to everyone */}
                           <AddEditProjectDialog 
                             project={project} 
-                            onSave={onSaveProject} 
-                            onDelete={onDeleteProject}
+                            onSave={handleSaveProject} 
+                            onDelete={handleDeleteProject}
                           />
                         </div>
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -213,7 +243,7 @@ const WorkSection = ({
                   {/* Add New Project button available when no projects exist in category */}
                   <AddEditProjectDialog 
                     onSave={(project) => {
-                      onSaveProject({
+                      handleSaveProject({
                         ...project,
                         category: activeTab === "all" ? project.category : activeTab as any
                       });

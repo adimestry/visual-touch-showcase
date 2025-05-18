@@ -122,6 +122,7 @@ const Index = () => {
   // Save projects to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('portfolioProjects', JSON.stringify(projects));
+    console.log("Projects updated in localStorage:", projects);
   }, [projects]);
 
   // Toggle dark mode
@@ -146,8 +147,12 @@ const Index = () => {
         updatedProjects[existingIndex] = project;
         return updatedProjects;
       } else {
-        // Add new project
-        return [...prev, project];
+        // Add new project with a unique ID
+        const newProject = {
+          ...project,
+          id: prev.length > 0 ? Math.max(...prev.map(p => p.id)) + 1 : 1
+        };
+        return [...prev, newProject];
       }
     });
   };
@@ -188,7 +193,6 @@ const Index = () => {
         projects={projects} 
         onSaveProject={handleSaveProject}
         onDeleteProject={handleDeleteProject}
-        isAdmin={true} // Always enable admin features for all users
       />
       <AboutSection />
       <ContactSection />
