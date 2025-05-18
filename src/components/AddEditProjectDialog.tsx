@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,14 +13,14 @@ interface AddEditProjectDialogProps {
   project?: Project;
   onSave: (project: Project) => void;
   onDelete?: (id: number) => void;
-  isAdmin?: boolean;
+  children?: React.ReactNode; // Add children prop
 }
 
 const AddEditProjectDialog = ({ 
   project, 
   onSave, 
-  onDelete, 
-  isAdmin = false 
+  onDelete,
+  children 
 }: AddEditProjectDialogProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Project>(
@@ -127,19 +126,20 @@ const AddEditProjectDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {project ? (
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1 text-xs"
-            disabled={!isAdmin}
-          >
-            <Edit className="h-3 w-3" /> Edit
-          </Button>
-        ) : (
-          <Button className="flex items-center gap-2">
-            <PlusCircle className="h-4 w-4" /> Add New Work
-          </Button>
+        {children ? children : (
+          project ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1 text-xs"
+            >
+              <Edit className="h-3 w-3" /> Edit
+            </Button>
+          ) : (
+            <Button className="flex items-center gap-2">
+              <PlusCircle className="h-4 w-4" /> Add New Work
+            </Button>
+          )
         )}
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
