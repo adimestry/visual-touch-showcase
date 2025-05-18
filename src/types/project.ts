@@ -10,7 +10,4 @@ export interface Project {
   gallery?: string[];
 }
 
-export interface User {
-  username: string;
-  isAdmin: boolean;
-}
+// Removed the User interface as it's no longer needed

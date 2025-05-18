@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -11,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
-import { Project, User } from "@/types/project";
+import { Project } from "@/types/project";
 
 // Demo projects data with more examples
 const initialProjects: Project[] = [
@@ -105,12 +104,6 @@ const Index = () => {
     return savedProjects ? JSON.parse(savedProjects) : initialProjects;
   });
   
-  // State for user authentication
-  const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem('portfolioUser');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-  
   // Handle dark mode based on user preference
   useEffect(() => {
     // Check user preference from localStorage or system preference
@@ -130,15 +123,6 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem('portfolioProjects', JSON.stringify(projects));
   }, [projects]);
-
-  // Save user to localStorage whenever it changes
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('portfolioUser', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('portfolioUser');
-    }
-  }, [user]);
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -172,25 +156,9 @@ const Index = () => {
     setProjects(prev => prev.filter(p => p.id !== id));
   };
 
-  // Handle login and logout
-  const handleLogin = (newUser: User) => {
-    setUser(newUser);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-  };
-
   return (
     <div className="min-h-screen w-full">
       <SpaceAnimation />
-      
-      {/* Admin Mode Indicator */}
-      {user?.isAdmin && (
-        <div className="fixed top-6 right-20 z-50 bg-accent/90 text-white px-3 py-1 rounded-md text-sm font-medium animate-pulse">
-          Admin Mode
-        </div>
-      )}
       
       {/* Theme toggle button */}
       <motion.div 
@@ -214,17 +182,13 @@ const Index = () => {
         </Button>
       </motion.div>
       
-      <Navbar 
-        user={user}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-      />
+      <Navbar />
       <HeroSection />
       <WorkSection 
         projects={projects} 
         onSaveProject={handleSaveProject}
         onDeleteProject={handleDeleteProject}
-        isAdmin={user?.isAdmin}
+        isAdmin={true} // Always enable admin features for all users
       />
       <AboutSection />
       <ContactSection />

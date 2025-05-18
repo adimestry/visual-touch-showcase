@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -26,14 +27,13 @@ interface WorkSectionProps {
   projects: Project[];
   onSaveProject: (project: Project) => void;
   onDeleteProject: (id: number) => void;
-  isAdmin?: boolean;
+  isAdmin?: boolean; // Kept for backward compatibility
 }
 
 const WorkSection = ({ 
   projects, 
   onSaveProject, 
-  onDeleteProject, 
-  isAdmin = false 
+  onDeleteProject
 }: WorkSectionProps) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeTab, setActiveTab] = useState("all");
@@ -75,12 +75,10 @@ const WorkSection = ({
             from logo design to wedding stationery and large-format printing.
           </p>
           
-          {/* Add New Project Button (Admin only) */}
-          {isAdmin && (
-            <div className="mt-6">
-              <AddEditProjectDialog onSave={onSaveProject} isAdmin={isAdmin} />
-            </div>
-          )}
+          {/* Add New Project Button (available to everyone) */}
+          <div className="mt-6">
+            <AddEditProjectDialog onSave={onSaveProject} />
+          </div>
         </motion.div>
 
         <Tabs 
@@ -122,14 +120,12 @@ const WorkSection = ({
                       <CardHeader className="p-4">
                         <div className="flex justify-between items-start">
                           <CardTitle className="font-heading">{project.title}</CardTitle>
-                          {isAdmin && (
-                            <AddEditProjectDialog 
-                              project={project} 
-                              onSave={onSaveProject} 
-                              onDelete={onDeleteProject}
-                              isAdmin={isAdmin}
-                            />
-                          )}
+                          {/* Edit button available to everyone */}
+                          <AddEditProjectDialog 
+                            project={project} 
+                            onSave={onSaveProject} 
+                            onDelete={onDeleteProject}
+                          />
                         </div>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {project.tags.map((tag, index) => (
@@ -214,17 +210,15 @@ const WorkSection = ({
               ) : (
                 <div className="col-span-3 text-center py-10">
                   <p className="text-foreground/60 mb-4">No projects found in this category.</p>
-                  {isAdmin && (
-                    <AddEditProjectDialog 
-                      onSave={(project) => {
-                        onSaveProject({
-                          ...project,
-                          category: activeTab === "all" ? project.category : activeTab as any
-                        });
-                      }} 
-                      isAdmin={isAdmin}
-                    />
-                  )}
+                  {/* Add New Project button available when no projects exist in category */}
+                  <AddEditProjectDialog 
+                    onSave={(project) => {
+                      onSaveProject({
+                        ...project,
+                        category: activeTab === "all" ? project.category : activeTab as any
+                      });
+                    }}
+                  />
                 </div>
               )}
             </motion.div>
