@@ -1,112 +1,76 @@
+
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import WorkSection from "@/components/WorkSection";
-import AboutSection from "@/components/AboutSection";
-import ContactSection from "@/components/ContactSection";
+import ForestHero from "@/components/ForestHero";
+import FeaturedProjects from "@/components/FeaturedProjects";
 import Footer from "@/components/Footer";
-import SpaceAnimation from "@/components/SpaceAnimation";
+import ForestAnimation from "@/components/ForestAnimation";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
-import { Toaster } from "@/components/ui/toaster";
 import { Project } from "@/types/project";
 
-// Demo projects data with more examples
+// Forest-themed demo projects
 const initialProjects: Project[] = [
   {
     id: 1,
-    title: "Clean Minimalist Logo",
-    description: "A modern, minimalist logo design for a tech startup with custom typography and iconic elements.",
-    image: "/placeholder.svg",
-    tags: ["Logo Design", "Branding", "Typography"],
+    title: "Woodland Spirits Logo",
+    description: "Mystical logo design for eco-friendly startup featuring ancient tree symbolism and ethereal elements.",
+    image: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
+    tags: ["Logo Design", "Branding", "Nature"],
     category: "logo",
-    fullDescription: "This minimalist logo design represents the client's vision for clean, forward-thinking brand identity. The design process involved several iterations to achieve perfect balance between simplicity and recognition.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
+    fullDescription: "This enchanting logo captures the essence of woodland magic, combining ancient tree wisdom with modern design principles. The organic curves and natural color palette create a timeless brand identity.",
+    gallery: [
+      "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     id: 2,
-    title: "Luxury Wedding Invitation",
-    description: "Elegant wedding card design with gold foil accents and custom calligraphy for a luxury event.",
-    image: "/placeholder.svg",
-    tags: ["Wedding Card", "Print Design", "Calligraphy"],
-    category: "wedding",
-    fullDescription: "This luxury wedding invitation set features handcrafted elements including custom calligraphy, gold foil details, and premium paper selection. The design reflects the couple's sophisticated style and the elegance of their event.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
+    title: "Forest Guardian Campaign",
+    description: "Environmental awareness campaign materials featuring wildlife photography and organic typography.",
+    image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80",
+    tags: ["Campaign Design", "Print", "Environmental"],
+    category: "printing",
+    fullDescription: "A comprehensive campaign celebrating forest guardians - the animals that protect our woodland ecosystems. This project combines stunning wildlife photography with hand-crafted typography.",
+    gallery: [
+      "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1439886183900-e79ec0057170?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     id: 3,
-    title: "Corporate Event Banner",
-    description: "Large format banner design for annual tech conference with dynamic visuals and clear information hierarchy.",
-    image: "/placeholder.svg",
-    tags: ["Banner Design", "Event Graphics", "Large Format"],
-    category: "printing",
-    fullDescription: "This banner was designed for the main entrance of a major tech conference. The design focuses on visibility from a distance while maintaining brand consistency and communicating key information about the event.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
+    title: "WildTrack App Design",
+    description: "Mobile app for wildlife tracking and forest exploration with intuitive nature-inspired interface.",
+    image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80",
+    tags: ["App Design", "UI/UX", "Wildlife"],
+    category: "app",
+    fullDescription: "WildTrack helps nature enthusiasts document their forest adventures. The interface mimics natural textures and uses organic navigation patterns inspired by animal trails.",
+    gallery: [
+      "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     id: 4,
-    title: "Furniture E-commerce Website",
-    description: "Modern e-commerce website for a premium furniture brand featuring product showcase and shopping cart functionality.",
-    image: "/placeholder.svg",
-    tags: ["Web Design", "E-commerce", "UI/UX"],
+    title: "Pine & Pixel Studio Website",
+    description: "Portfolio website for nature photographer with seamless forest-to-digital transitions.",
+    image: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?auto=format&fit=crop&w=800&q=80",
+    tags: ["Web Design", "Photography", "Nature"],
     category: "web",
-    fullDescription: "This e-commerce platform was designed with a focus on showcasing high-quality furniture photography and providing an intuitive shopping experience. The design emphasizes clean lines and ample white space to let the products shine.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 5,
-    title: "Fitness Tracking Mobile App",
-    description: "User-friendly mobile app for tracking workouts, monitoring progress, and setting fitness goals.",
-    image: "/placeholder.svg",
-    tags: ["App Design", "UI/UX", "Mobile"],
-    category: "app",
-    fullDescription: "This fitness tracking app features an intuitive interface that makes it easy for users to log workouts, track progress over time, and set achievable fitness goals. The design includes customizable dashboards and motivational elements.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 6,
-    title: "Coffee Brand Identity",
-    description: "Complete brand identity for an artisan coffee roaster including logo, packaging, and marketing materials.",
-    image: "/placeholder.svg",
-    tags: ["Logo Design", "Branding", "Packaging"],
-    category: "logo",
-    fullDescription: "This comprehensive brand identity project for an artisan coffee roaster included logo design, packaging for different coffee varieties, in-store signage, and marketing materials. The design captures the artisanal nature of the brand.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 7,
-    title: "Fashion Lookbook Design",
-    description: "Seasonal lookbook design for fashion brand showcasing new collection through editorial photography and typography.",
-    image: "/placeholder.svg",
-    tags: ["Print Design", "Editorial", "Fashion"],
-    category: "printing",
-    fullDescription: "This seasonal lookbook design for a fashion brand combines editorial photography with dynamic layouts and typography. The design embraces white space and strategic pacing to create an engaging presentation of the collection.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
-  },
-  {
-    id: 8,
-    title: "Music Streaming App",
-    description: "Mobile app design for a music streaming service with personalized recommendations and playlist creation.",
-    image: "/placeholder.svg",
-    tags: ["App Design", "UI/UX", "Entertainment"],
-    category: "app",
-    fullDescription: "This music streaming app features a dark-themed interface optimized for browsing and discovering music. The design includes intuitive playlist creation, personalized recommendations, and a seamless listening experience.",
-    gallery: ["/placeholder.svg", "/placeholder.svg"]
+    fullDescription: "A stunning portfolio website that blends digital artistry with natural beauty. Features parallax scrolling that mimics walking through a forest canopy.",
+    gallery: [
+      "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1493962853295-0fd70327578a?auto=format&fit=crop&w=800&q=80"
+    ]
   }
 ];
 
 const Index = () => {
   const [isDark, setIsDark] = useState(false);
-  const [projects, setProjects] = useState<Project[]>(() => {
-    // Try to load projects from localStorage
-    const savedProjects = localStorage.getItem('portfolioProjects');
-    return savedProjects ? JSON.parse(savedProjects) : initialProjects;
-  });
+  const [projects] = useState<Project[]>(initialProjects);
   
-  // Handle dark mode based on user preference
   useEffect(() => {
-    // Check user preference from localStorage or system preference
     const darkModePreference = localStorage.getItem("theme") === "dark" || 
       (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
     
@@ -119,13 +83,6 @@ const Index = () => {
     }
   }, []);
 
-  // Save projects to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('portfolioProjects', JSON.stringify(projects));
-    console.log("Projects updated in localStorage:", projects);
-  }, [projects]);
-
-  // Toggle dark mode
   const toggleDarkMode = () => {
     setIsDark(!isDark);
     if (!isDark) {
@@ -137,35 +94,12 @@ const Index = () => {
     }
   };
 
-  // Handle project operations
-  const handleSaveProject = (project: Project) => {
-    setProjects(prev => {
-      const existingIndex = prev.findIndex(p => p.id === project.id);
-      if (existingIndex >= 0) {
-        // Update existing project
-        const updatedProjects = [...prev];
-        updatedProjects[existingIndex] = project;
-        return updatedProjects;
-      } else {
-        // Add new project with a unique ID
-        const newProject = {
-          ...project,
-          id: prev.length > 0 ? Math.max(...prev.map(p => p.id)) + 1 : 1
-        };
-        return [...prev, newProject];
-      }
-    });
-  };
-
-  const handleDeleteProject = (id: number) => {
-    setProjects(prev => prev.filter(p => p.id !== id));
-  };
+  const featuredProjects = projects.slice(0, 4);
 
   return (
-    <div className="min-h-screen w-full">
-      <SpaceAnimation />
+    <div className="min-h-screen w-full bg-gradient-to-b from-emerald-50 to-green-100 dark:from-emerald-950 dark:to-green-900">
+      <ForestAnimation />
       
-      {/* Theme toggle button */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -176,28 +110,21 @@ const Index = () => {
           size="icon"
           variant="outline"
           onClick={toggleDarkMode}
-          className="rounded-full w-10 h-10 bg-background/50 backdrop-blur-sm border-accent/20 hover:border-accent/50 hover:bg-background/80"
+          className="rounded-full w-12 h-12 bg-background/80 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 hover:bg-background/90 shadow-lg"
         >
           {isDark ? (
-            <Sun className="h-5 w-5 text-accent" />
+            <Sun className="h-5 w-5 text-amber-500" />
           ) : (
-            <Moon className="h-5 w-5 text-accent" />
+            <Moon className="h-5 w-5 text-emerald-600" />
           )}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </motion.div>
       
       <Navbar />
-      <HeroSection />
-      <WorkSection 
-        projects={projects} 
-        onSaveProject={handleSaveProject}
-        onDeleteProject={handleDeleteProject}
-      />
-      <AboutSection />
-      <ContactSection />
+      <ForestHero />
+      <FeaturedProjects projects={featuredProjects} />
       <Footer />
-      <Toaster />
     </div>
   );
 };
